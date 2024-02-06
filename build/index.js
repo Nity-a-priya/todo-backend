@@ -36,6 +36,7 @@ const submit = async (url, body) => {
     document.getElementById("text").value = "";
 
     DATA = data;
+    isEditable.isEdited = false;
     return showItems();
   }
 };
@@ -54,7 +55,7 @@ const handleSubmit = () => {
     url = "/edit";
   }
   submit(url, body);
-  isEditable.isEdited = false;
+  
 };
 
 const showItems = () => {
@@ -64,7 +65,7 @@ const showItems = () => {
   DATA.forEach((item, index) => {
     const div = createElement("div");
     div.setAttribute("id", "items");
-    div.innerHTML = `<li id = "li">${item}</li><button id="edit" onclick = "handleEdit('${item}','${index}')" >edit</button>`;
+    div.innerHTML = `<li id = "li">${item}</li><button id="edit" onclick = "handleEdit('${item}','${index}')" ><img src="pen-to-square-solid.svg"></button>`;
     list.appendChild(div);
   });
   isEmpty = false;
@@ -80,11 +81,18 @@ const handleEdit = (item, index) => {
   isEditable.index = index;
   //-------------------
 };
+const handleCancel = () => {
+  const input_div = document.getElementsByClassName("input-div")[0];
+  input_div.style.display = "none";
+  document.getElementById("text").value = "";
+  isEditable.isEdited=false;
+}
 
 const main = () => {
   document.getElementsByClassName("add")[0].addEventListener("click", addInput);
 
   document.getElementById("submit").addEventListener("click", handleSubmit);
+  document.getElementById("cancel").addEventListener("click",handleCancel);
   // document.getElementById("edit").addEventListener("click",handleEdit);
   fetch("/get")
     .then((response) => response.json())

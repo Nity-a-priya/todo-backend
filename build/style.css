@@ -42,8 +42,8 @@
    margin-top: 5%;
    background-color: rgb(247, 236, 222);
 }
-#submit{
-    width: 20%;
+#submit,#cancel {
+    width: 15%;
     height: 40px;
    cursor: pointer;
     font-size: large;
@@ -63,7 +63,7 @@ ul{
 
 }
 li{
-    
+    flex:5;
     
 }
 #items{
@@ -73,4 +73,16 @@ li{
     letter-spacing: 1px;
     line-height: 1.8;
     text-shadow: 1px 1px 7px rgb(232, 167, 167);
+}
+img{
+    flex: 1;
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+#items{
+    display: flex;
+    justify-content: center;
 }
