@@ -1,0 +1,71 @@
+.first-div{
+    display: flex;
+    justify-content: center;
+    
+}
+.main-div{
+    width: 60%;
+    /* border: 1px slategray;
+    background-color: darkolivegreen; */
+}
+.add{
+    width: 40%;
+    height: 50px;
+    border-radius: 25px;
+    font-size: xx-large;
+   margin-top: 5%;
+   margin-left: 25%;
+   letter-spacing: 2px;
+   background-image: linear-gradient(rgb(124, 69, 128), rgb(120, 120, 40));
+ 
+   color: white;
+   text-shadow: 1px 1px 2px black, 0 0 25px rgb(130, 77, 77), 0 0 5px rgb(68, 97, 119);
+  
+   font-family: 'Abril Fatface', serif;
+}
+.add:hover{
+    background-image: linear-gradient(rgb(130, 138, 153), rgb(144, 123, 102));
+    color: rgb(0, 0, 0);
+    transition: 0.7s;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0);
+    text-shadow: 1px 1px 2px rgb(244, 241, 241), 0 0 25px rgb(140, 132, 132), 0 0 5px rgb(131, 141, 149);
+    cursor: pointer;
+}
+.input-div{
+   margin-top: 2%;
+   margin-left: 25%;
+}
+#text{
+    width: 40%;
+    height: 40px;
+    font-size: large;
+   margin-top: 5%;
+   background-color: rgb(247, 236, 222);
+}
+#submit{
+    width: 20%;
+    height: 40px;
+   cursor: pointer;
+    font-size: large;
+   margin-top: 5%;
+   
+   background-color: rgb(103, 93, 93);
+   color: aliceblue;
+   font-family: Georgia, serif;
+}
+ul{
+ margin-top: 2%;
+   margin-left: 27%;
+    width: 35%;
+    list-style: none;
+    padding: 0%;
+    background-color: rgb(161, 140, 140);
+}
+li{
+    font-size: x-large;
+    padding: 15px;
+    border-bottom: 0.5px solid;
+    letter-spacing: 1px;
+    line-height: 1.8;
+    text-shadow: 1px 1px 7px rgb(232, 167, 167);
+}
