@@ -1,3 +1,5 @@
+
+
 let DATA = [];
 let isEmpty = true;
 let isEditable = {
@@ -65,13 +67,14 @@ const showItems = () => {
   DATA.forEach((item, index) => {
     const div = createElement("div");
     div.setAttribute("id", "items");
-    div.innerHTML = `<li id = "li">${item}</li><button id="edit" onclick = "handleEdit('${item}','${index}')" ><img src="pen-to-square-solid.svg"></button>`;
+    div.innerHTML = `<li id = "li">${item}</li><button id="edit" onclick = "handleEdit('${item}','${index}')" ><img src="pen-to-square-solid.svg"></button><button id="delete" onclick = "handleDelete('${index}')"><img src="dustbin.jpeg"></button>`;
     list.appendChild(div);
   });
   isEmpty = false;
 };
 
 const handleEdit = (item, index) => {
+  document.getElementById('delete').disabled = true;
   const input_div = document.getElementsByClassName("input-div")[0];
   input_div.style.display = "";
   document.getElementById("text").value = item;
@@ -81,6 +84,14 @@ const handleEdit = (item, index) => {
   isEditable.index = index;
   //-------------------
 };
+const handleDelete = (index) => {
+  const url = '/delete?index='+index; 
+fetch(url).then(response => response.json()).then(data => {
+  DATA = data;
+  showItems()
+});
+
+}
 const handleCancel = () => {
   const input_div = document.getElementsByClassName("input-div")[0];
   input_div.style.display = "none";
@@ -93,7 +104,6 @@ const main = () => {
 
   document.getElementById("submit").addEventListener("click", handleSubmit);
   document.getElementById("cancel").addEventListener("click",handleCancel);
-  // document.getElementById("edit").addEventListener("click",handleEdit);
   fetch("/get")
     .then((response) => response.json())
     .then((data) => {
