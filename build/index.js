@@ -1,11 +1,17 @@
-
-
 let DATA = [];
-let isEmpty = true;
+let cFlag = [];
 let isEditable = {
   isEdited: false,
 };
 
+const getRequest = (url) => {
+  return fetch(url).then((response) => response.json());
+  
+};
+
+
+
+// improve
 const addInput = () => {
   const input_div = document.getElementsByClassName("input-div")[0];
   if (input_div.style.display === "none") {
@@ -20,28 +26,39 @@ const createElement = (ele) => {
   return element;
 };
 
-const submit = async (url, body) => {
-  const input_div = document.getElementsByClassName("input-div")[0];
+// improve
+const clickSubmit = async(url, body) => {
   const value = document.getElementById("text").value;
   if (value != "") {
-    const params = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    };
-
-    const post = await fetch(url, params);
-    const data = await post.json();
-    input_div.style.display = "none";
-    document.getElementById("text").value = "";
-
-    DATA = data;
-    isEditable.isEdited = false;
-    return showItems();
+    await postReq(url,body);
+ 
+    hideInput();
+   
   }
 };
+const postReq = async(url,body) => {
+  const params = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  };
+
+  const post = await fetch(url, params);
+  const data = await post.json();
+  DATA = data.items;
+  cFlag = data.completeFlag;
+ 
+}
+const hideInput = () => {
+  const input_div = document.getElementsByClassName("input-div")[0];
+  input_div.style.display = "none";
+  document.getElementById("text").value = "";
+
+  isEditable.isEdited = false;
+  showItems();
+}
 
 const handleSubmit = () => {
   const value = document.getElementById("text").value;
@@ -56,25 +73,30 @@ const handleSubmit = () => {
     };
     url = "/edit";
   }
-  submit(url, body);
-  
+  clickSubmit(url, body);
 };
 
 const showItems = () => {
   const list = document.getElementsByTagName("ul")[0];
-
-  if (!isEmpty) list.innerHTML = "";
+let no_of_completed=0;
+  list.innerHTML = "";
   DATA.forEach((item, index) => {
     const div = createElement("div");
     div.setAttribute("id", "items");
-    div.innerHTML = `<li id = "li">${item}</li><button id="edit" onclick = "handleEdit('${item}','${index}')" ><img src="pen-to-square-solid.svg"></button><button id="delete" onclick = "handleDelete('${index}')"><img src="dustbin.jpeg"></button>`;
+    // div.setAttribute("onclick","completed()");
+    div.innerHTML = `<li id = "li" onclick = "completed('${index}')">${item}</li><button id="edit" onclick = "handleEdit('${item}','${index}')" ><img src="pen-to-square-solid.svg"></button><button id="delete" onclick = "handleDelete('${index}')"><img src="dustbin.jpeg"></button>`;
     list.appendChild(div);
+    if(cFlag[index]){
+      showCompleteColour(index);
+      no_of_completed = no_of_completed+1;
+    }
   });
-  isEmpty = false;
+  let total = cFlag.length;
+  document.getElementsByTagName("h1")[0].innerText = `Completed: ${no_of_completed}/${total}`;
 };
 
 const handleEdit = (item, index) => {
-  document.getElementById('delete').disabled = true;
+  document.getElementById("delete").disabled = true;
   const input_div = document.getElementsByClassName("input-div")[0];
   input_div.style.display = "";
   document.getElementById("text").value = item;
@@ -84,30 +106,63 @@ const handleEdit = (item, index) => {
   isEditable.index = index;
   //-------------------
 };
-const handleDelete = (index) => {
-  const url = '/delete?index='+index; 
-fetch(url).then(response => response.json()).then(data => {
-  DATA = data;
-  showItems()
-});
+const completed = async(index) => {
+console.log("----------clicked");
+showCompleteColour(index);
+ const url = "/completeSign";
+ body = {
+  index
+ }
+ await postReq(url,body);
+ showItems();
 
 }
+const showCompleteColour = (index) => {
+  const divTag = document.querySelectorAll("#items")[index];
+  divTag.style.pointerEvents = "none";
+  divTag.style.cursor = "none";
+  divTag.style.backgroundColor = "#5a6b59";
+  divTag.style.textShadow = "none";
+
+  const ul = document.getElementsByClassName("list")[0];
+  const newDiv = createElement("div");
+  newDiv.setAttribute("id","complete_div");
+
+  const doneTag = createElement("img");
+  doneTag.setAttribute("src","done.jpeg");
+  doneTag.setAttribute("id","done")
+  doneTag.style.backgroundColor = "#5a6b59";
+  newDiv.appendChild(doneTag);
+  newDiv.appendChild(divTag);
+
+  ul.appendChild(newDiv);
+
+  
+}
+const handleDelete = async(index) => {
+  const url = "/delete";
+  body = {
+    index
+  }
+  await postReq(url,body);
+  showItems();
+    
+};
 const handleCancel = () => {
   const input_div = document.getElementsByClassName("input-div")[0];
   input_div.style.display = "none";
   document.getElementById("text").value = "";
-  isEditable.isEdited=false;
-}
+  isEditable.isEdited = false;
+  document.getElementById("delete").disabled = false;
+};
 
-const main = () => {
+const main = async () => {
   document.getElementsByClassName("add")[0].addEventListener("click", addInput);
-
   document.getElementById("submit").addEventListener("click", handleSubmit);
-  document.getElementById("cancel").addEventListener("click",handleCancel);
-  fetch("/get")
-    .then((response) => response.json())
-    .then((data) => {
-      DATA = data;
-      showItems();
-    });
+  document.getElementById("cancel").addEventListener("click", handleCancel);
+  // improve
+  const response = await getRequest("/get")
+  DATA = response.items;
+  cFlag = response.completeFlag;
+  showItems();
 };
