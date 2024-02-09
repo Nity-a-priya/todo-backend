@@ -1,35 +1,46 @@
-let items = [];
-let completeFlag = [];
+let data = [];
 
 const getData = (req, res) => {
-  res.send({items,completeFlag});
+  res.send(data);
 };
 
 const postItem = (req, res) => {
   const item = req.body.value;
-  items = [item, ...items];
-  completeFlag = [false, ...completeFlag];
-  res.send({items,completeFlag});
+  const obj = {
+    item,
+    isCompleted:false
+  }
+  data.unshift(obj);
+  res.send(data);
 };
 
 const replaceItem = (req, res) => {
   const new_item = req.body.value;
   const index = req.body.index;
-  const changed = items.splice(index, 1, new_item);
-  res.send({items,completeFlag});
+  const obj = {
+    item:new_item,
+    isCompleted:false
+  }
+  data.splice(index, 1, obj);
+  res.send(data);
 };
 
 const deleteData = (req, res) => {
   const id = req.body.index;
-  items.splice(id, 1);
-  completeFlag.splice(id,1)
-  res.send({items,completeFlag});
+  data.splice(id, 1);
+  res.send(data);
 };
 
-const disableItem = (req,res) => {
+const disableItem = (req, res) => {
   const index = req.body.index;
-  completeFlag[index] = true;
-  res.send({items,completeFlag});
-}
+  data[index].isCompleted = true;
+  res.send(data);
+};
 
-module.exports = { postItem, replaceItem, getData, deleteData, disableItem };
+module.exports = {
+   postItem,
+   replaceItem,
+  getData,
+    deleteData,
+   disableItem
+};

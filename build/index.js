@@ -6,10 +6,7 @@ let isEditable = {
 
 const getRequest = (url) => {
   return fetch(url).then((response) => response.json());
-  
 };
-
-
 
 // improve
 const addInput = () => {
@@ -27,16 +24,15 @@ const createElement = (ele) => {
 };
 
 // improve
-const clickSubmit = async(url, body) => {
+const clickSubmit = async (url, body) => {
   const value = document.getElementById("text").value;
   if (value != "") {
-    await postReq(url,body);
- 
+    await postReq(url, body);
+
     hideInput();
-   
   }
 };
-const postReq = async(url,body) => {
+const postReq = async (url, body) => {
   const params = {
     method: "POST",
     headers: {
@@ -47,10 +43,8 @@ const postReq = async(url,body) => {
 
   const post = await fetch(url, params);
   const data = await post.json();
-  DATA = data.items;
-  cFlag = data.completeFlag;
- 
-}
+  DATA = data;
+};
 const hideInput = () => {
   const input_div = document.getElementsByClassName("input-div")[0];
   input_div.style.display = "none";
@@ -58,7 +52,7 @@ const hideInput = () => {
 
   isEditable.isEdited = false;
   showItems();
-}
+};
 
 const handleSubmit = () => {
   const value = document.getElementById("text").value;
@@ -78,25 +72,27 @@ const handleSubmit = () => {
 
 const showItems = () => {
   const list = document.getElementsByTagName("ul")[0];
-let no_of_completed=0;
+  let no_of_completed = 0;
   list.innerHTML = "";
   DATA.forEach((item, index) => {
     const div = createElement("div");
     div.setAttribute("id", "items");
     // div.setAttribute("onclick","completed()");
-    div.innerHTML = `<li id = "li" onclick = "completed('${index}')">${item}</li><button id="edit" onclick = "handleEdit('${item}','${index}')" ><img src="pen-to-square-solid.svg"></button><button id="delete" onclick = "handleDelete('${index}')"><img src="dustbin.jpeg"></button>`;
+    div.innerHTML = `<li id = "li" onclick = "completed('${index}')">${item.item}</li><button id="edit" onclick = "handleEdit('${item.item}','${index}')" ><img src="pen-to-square-solid.svg"></button><button id="delete" onclick = "handleDelete('${index}')"><img src="dustbin.jpeg"></button>`;
     list.appendChild(div);
-    if(cFlag[index]){
+    if (item.isCompleted) {
       showCompleteColour(index);
-      no_of_completed = no_of_completed+1;
+      no_of_completed = no_of_completed + 1;
     }
   });
-  let total = cFlag.length;
-  document.getElementsByTagName("h1")[0].innerText = `Completed: ${no_of_completed}/${total}`;
+  let total = DATA.length;
+  document.getElementsByTagName(
+    "h1"
+  )[0].innerText = `Completed: ${no_of_completed}/${total}`;
 };
 
 const handleEdit = (item, index) => {
-  document.getElementById("delete").disabled = true;
+  document.querySelectorAll("#delete")[index].disabled = true;
   const input_div = document.getElementsByClassName("input-div")[0];
   input_div.style.display = "";
   document.getElementById("text").value = item;
@@ -106,17 +102,15 @@ const handleEdit = (item, index) => {
   isEditable.index = index;
   //-------------------
 };
-const completed = async(index) => {
-console.log("----------clicked");
-showCompleteColour(index);
- const url = "/completeSign";
- body = {
-  index
- }
- await postReq(url,body);
- showItems();
-
-}
+const completed = async (index) => {
+  showCompleteColour(index);
+  const url = "/completeSign";
+  body = {
+    index,
+  };
+  await postReq(url, body);
+  showItems();
+};
 const showCompleteColour = (index) => {
   const divTag = document.querySelectorAll("#items")[index];
   divTag.style.pointerEvents = "none";
@@ -126,43 +120,39 @@ const showCompleteColour = (index) => {
 
   const ul = document.getElementsByClassName("list")[0];
   const newDiv = createElement("div");
-  newDiv.setAttribute("id","complete_div");
+  newDiv.setAttribute("id", "complete_div");
 
   const doneTag = createElement("img");
-  doneTag.setAttribute("src","done.jpeg");
-  doneTag.setAttribute("id","done")
+  doneTag.setAttribute("src", "done.jpeg");
+  doneTag.setAttribute("id", "done");
   doneTag.style.backgroundColor = "#5a6b59";
   newDiv.appendChild(doneTag);
   newDiv.appendChild(divTag);
 
   ul.appendChild(newDiv);
+};
 
-  
-}
-const handleDelete = async(index) => {
+const handleDelete = async (index) => {
   const url = "/delete";
   body = {
-    index
-  }
-  await postReq(url,body);
+    index,
+  };
+  await postReq(url, body);
   showItems();
-    
 };
 const handleCancel = () => {
   const input_div = document.getElementsByClassName("input-div")[0];
   input_div.style.display = "none";
   document.getElementById("text").value = "";
   isEditable.isEdited = false;
-  document.getElementById("delete").disabled = false;
+  document.querySelectorAll("#delete").forEach(ele => ele.disabled=false);
 };
 
 const main = async () => {
   document.getElementsByClassName("add")[0].addEventListener("click", addInput);
   document.getElementById("submit").addEventListener("click", handleSubmit);
   document.getElementById("cancel").addEventListener("click", handleCancel);
-  // improve
-  const response = await getRequest("/get")
-  DATA = response.items;
-  cFlag = response.completeFlag;
+
+  DATA = await getRequest("/get");
   showItems();
 };
