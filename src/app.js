@@ -1,20 +1,20 @@
-const express = require('express');
+const express = require("express");
 const {
-    getData
-    ,postItem
-    , replaceItem
-    , deleteData
-    , disableItem
-} = require('./logic');
+  getTodos,
+  addTodo,
+  editTodo,
+  deleteTodo,
+  MarkTodoAsDone,
+} = require("./logic");
 
 const app = express();
-app.use(express.static('build'))
+app.use(express.static("build"));
 app.use(express.json());
 
-app.get('/get',getData);
- app.post('/delete', deleteData);
-app.post('/add',postItem);
- app.post('/edit',replaceItem);
- app.post('/completeSign', disableItem)
+app.get("/get", getTodos);
+app.post("/delete", deleteTodo);
+app.post("/add", addTodo);
+app.post("/edit", editTodo);
+app.post("/completeSign", MarkTodoAsDone);
 
 module.exports = app;

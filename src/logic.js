@@ -1,76 +1,89 @@
-let data = [
+let DATA = [
   {
-    id:22,
-    item:"nitya",
-    date:'2024-02-19'
-
-  },{
-    id:23,
-    item:"priya",
-    date:'2024-02-20'
-  },{
-    id:24,
-    item:"venky",
-    date:'2024-02-20'
-  },{
-    id:25,
-    item:"setti",
-    date:'2024-02-19'
-  }
+    id: 22,
+    item: "nitya",
+    date: "2024-02-19",
+  },
+  {
+    id: 23,
+    item: "priya",
+    date: "2024-02-20",
+  },
+  {
+    id: 24,
+    item: "venky",
+    date: "2024-02-20",
+  },
+  {
+    id: 25,
+    item: "setti",
+    date: "2024-02-19",
+  },
 ];
-let id = 0;
 
-const getData = (req, res) => {
-  res.send(data);
+const generateId = (() => {
+  let id = 0;
+  return () => {
+    id++;
+    return id;
+  };
+})();
+
+const getMatchingIndex = (todos, id) => {
+  return todos.findIndex((todo) => todo.id == id);
 };
 
-const postItem = (req, res) => {
-  const item = req.body.value;
+const getTodos = (req, res) => {
+  res.send(DATA);
+};
+
+const addTodo = (req, res) => {
+  const text = req.body.value;
   const date = req.body.date;
-  const obj = {
-    id:id+1,
-    item,
-    date,
-    isCompleted:false
-  }
-  data.unshift(obj);
-  id++;
-  res.send(data);
-};
-
-const replaceItem = (req, res) => {
-  const new_item = req.body.value;
-  const new_date = req.body.date;
-  const id = req.body.index;
+  const id = generateId();
   const obj = {
     id,
-    item:new_item,
-    date:new_date,
-    isCompleted:false
-  }
-  const index = data.findIndex( obj => obj.id == id);
-  data.splice(index, 1, obj);
-  res.send(data);
+    item: text,
+    date,
+    isCompleted: false,
+  };
+  DATA.unshift(obj);
+  res.send(DATA);
 };
 
-const deleteData = (req, res) => {
+const editTodo = (req, res) => {
+  const new_text = req.body.value;
+  const new_date = req.body.date;
   const id = req.body.index;
-  const index = data.findIndex( obj => obj.id == id);
-  data.splice(index, 1);
-  res.send(data);
+  const newTodo = {
+    id,
+    item: new_text,
+    date: new_date,
+    isCompleted: false,
+  };
+  const index = getMatchingIndex(DATA, id);
+  DATA.splice(index, 1, newTodo);
+  res.send(DATA);
 };
 
-const disableItem = (req, res) => {
+const deleteTodo = (req, res) => {
+  const id = req.body.index;
+  const index = getMatchingIndex(DATA, id);
+  DATA.splice(index, 1);
+  res.send(DATA);
+};
+
+const MarkTodoAsDone = (req, res) => {
   const id = req.body.id;
-  const index = data.findIndex( obj => obj.id == id);
-  data[index].isCompleted = true;
-  res.send(data);
+  const index = getMatchingIndex(DATA, id);
+  DATA[index].isCompleted = true;
+  res.send(DATA);
 };
 
 module.exports = {
-   postItem,
-   replaceItem,
-  getData,
-    deleteData,
-   disableItem
+  addTodo,
+  editTodo,
+  getTodos,
+  deleteTodo,
+  MarkTodoAsDone,
 };
