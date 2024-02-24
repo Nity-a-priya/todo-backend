@@ -34,6 +34,8 @@ const getMatchingIndex = (todos, id) => {
 };
 
 const getTodos = (req, res) => {
+  const cookieHeader = req.headers.cookie;
+  console.log(cookieHeader)
   res.send(DATA);
 };
 

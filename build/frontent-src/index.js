@@ -3,21 +3,6 @@ let isEditable = {
   isEdited: false,
 };
 
-const getRequest = (url) => {
-  return fetch(url).then((response) => response.json());
-};
-const createElement_class_id_AddParent = (ele, classname, id, parent) => {
-  const element = createElement(ele);
-  if (classname != "") {
-    element.className = classname;
-  }
-  if (id != "") {
-    element.id = id;
-  }
-  parent.appendChild(element);
-  return element;
-};
-
 const addInput = () => {
   const input_div = document.getElementsByClassName("input-div")[0];
   if (input_div.style.display === "none") {
@@ -27,28 +12,11 @@ const addInput = () => {
   }
 };
 
-const createElement = (ele) => {
-  const element = document.createElement(ele);
-  return element;
-};
-
 const clickSubmit = async (url, body) => {
   await postReq(url, body);
   hideInput();
 };
-const postReq = async (url, body) => {
-  const params = {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  };
 
-  const post = await fetch(url, params);
-  const data = await post.json();
-  DATA = data;
-};
 const hideInput = () => {
   const input_div = document.getElementsByClassName("input-div")[0];
   input_div.style.display = "none";
@@ -62,9 +30,7 @@ const hideInput = () => {
 const handleSubmit = () => {
   const value = document.getElementById("text").value;
   const date = document.getElementById("date").value;
-  const addButton = document.querySelector(".add");
-  addButton.disabled = false;
-  addButton.style.cursor = "pointer";
+  enableAddButton();
 
   let url = "/add";
   let body = {
@@ -90,31 +56,16 @@ const createCalendarHeading = (
   calendarToDo,
   date
 ) => {
-  const calendar_heading = createElement_class_id_AddParent(
-    "div",
-    "calendar_heading",
-    "",
-    calendar_div
-  );
-
-  const calendar_text = createElement_class_id_AddParent(
-    "h3",
-    "date",
-    "",
-    calendar_heading
-  );
-  calendar_text.textContent = date;
-
-  const completed_count = createElement_class_id_AddParent(
-    "h4",
-    "count",
-    "",
-    calendar_heading
-  );
-  completed_count.textContent =
-    "Completed: " + no_of_completed + "/" + calendarToDo.length;
-
-  return completed_count;
+  calendar_div.innerHTML = `
+<div class = "calendar_heading">
+    <h3 class="date">
+    ${date}
+    </h3>
+    <h4 class="count">
+    Completed: ${no_of_completed}/${calendarToDo.length}
+    </h4>
+</div>
+`;
 };
 
 const showEachToDo = (item, calendar_body, index) => {
@@ -124,37 +75,39 @@ const showEachToDo = (item, calendar_body, index) => {
     "items" + item.id,
     calendar_body
   );
-
-  todo.innerHTML = `<li id = "li" onclick = "completed('${item.id}', '${index}')">${item.item}</li><button id="edit" onclick = "handleEdit('${item.item}','${item.date}','${item.id}')" ><img src="pen-to-square-solid.svg"></button><button id="delete" onclick = "handleDelete('${item.id}')"><img src="dustbin.jpeg"></button>`;
+ 
+  todo.innerHTML = `
+  <li id = "li" onclick = "completed('${item.id}', '${index}')">
+    ${item.item}
+  </li>
+  <button id="edit" onclick = "handleEdit('${item.item}','${item.date}','${item.id}')" >
+    <img src="pen-to-square-solid.svg">
+  </button>
+  <button id="delete" onclick = "handleDelete('${item.id}')">
+    <img src="dustbin.jpeg">
+  </button>`;
 };
 
-const displayToDos = (dateWiseTodos, list, index) => {
-  let no_of_completed = 0;
+const displayToDos = (no_of_completed,dateWiseTodos, list, index) => {
+ 
   const calendarToDo = dateWiseTodos.todos;
 
-  const outer_calendar_div = createElement_class_id_AddParent(
-    "div",
-    "outer_calendar",
-    "",
-    list
-  );
+  list.innerHTML = list.innerHTML + `
+  <div class="outer_calendar">
+    <div class="calendar" id='calendar${index}'>
 
-  const calendar_div = createElement_class_id_AddParent(
-    "div",
-    "calendar",
-    "calendar" + index,
-    outer_calendar_div
-  );
+    </div>
+  </div>
+  `;
 
-  const completed_count = createCalendarHeading(
+  const calendar_div = document.getElementById(`calendar${index}`);
+
+  createCalendarHeading(
     calendar_div,
     no_of_completed,
     calendarToDo,
     dateWiseTodos.date
   );
-  // const calendar_body = createElement("div");
-  // calendar_body.setAttribute("class", "calendar_body");
-  // calendar_div.appendChild(calendar_body);
 
   const calendar_body = createElement_class_id_AddParent(
     "div",
@@ -170,7 +123,7 @@ const displayToDos = (dateWiseTodos, list, index) => {
       no_of_completed = no_of_completed + 1;
     }
   });
-  completed_count.textContent =
+  calendar_div.children[0].children[1].innerHTML =
     "Completed: " + no_of_completed + "/" + calendarToDo.length;
 };
 
@@ -191,12 +144,6 @@ const getDatesWiseTodos = (data) => {
   }, []);
 };
 
-const sortDates = (array) => {
-  return array.sort(function (a, b) {
-    return new Date(b.date) - new Date(a.date);
-  });
-};
-
 const showItems = () => {
   const list = document.getElementsByTagName("ul")[0];
 
@@ -206,18 +153,16 @@ const showItems = () => {
 
   const sortedDatewiseTodos = sortDates(datesWiseTodos);
   sortedDatewiseTodos.forEach((dateWiseTodos, index) => {
-    displayToDos(dateWiseTodos, list, index);
+    let no_of_completed = 0;
+    displayToDos(no_of_completed,dateWiseTodos, list, index);
   });
 };
 
 const handleEdit = (text, date, index) => {
   const item = document.getElementById("items" + index);
-  item.children.delete.disabled = true;
-  item.style.pointerEvents = "none";
-  item.style.cursor = "not-allowed";
-  const addButton = document.querySelector(".add");
-  addButton.disabled = true;
-  addButton.style.cursor = "not-allowed";
+  deleteButtonStatus(item, true, "none", "not-allowed");
+
+  disableAddButton();
 
   const input_div = document.getElementsByClassName("input-div")[0];
   input_div.style.display = "";
@@ -229,6 +174,7 @@ const handleEdit = (text, date, index) => {
   isEditable.index = index;
   //-------------------
 };
+
 const completed = async (id, index) => {
   showCompleteColour(id, index);
   const url = "/completeSign";
@@ -238,6 +184,7 @@ const completed = async (id, index) => {
   await postReq(url, body);
   showItems();
 };
+
 const showCompleteColour = (id, index) => {
   const calendarID = document.getElementById("calendar_body" + index);
 
@@ -252,12 +199,11 @@ const showCompleteColour = (id, index) => {
   doneTag.style.backgroundColor = "#5a6b59";
 
   const divTag = document.getElementById("items" + id);
-  divTag.style.pointerEvents = "none";
-  divTag.style.backgroundColor = "rgb(46, 61, 45)";
+  divTag.style.backgroundColor = "rgba(6, 65, 17, 0.51)";
   divTag.style.textShadow = "none";
   newDiv.appendChild(divTag);
 
-  divTag.children.delete.disabled = true;
+  deleteButtonStatus(divTag, true, "none", "not-allowed");
   divTag.children.edit.disabled = true;
 };
 
@@ -269,20 +215,16 @@ const handleDelete = async (index) => {
   await postReq(url, body);
   showItems();
 };
+
 const handleCancel = () => {
   const input_div = document.getElementsByClassName("input-div")[0];
   input_div.style.display = "none";
   document.getElementById("text").value = "";
   document.getElementById("date").value = "";
   isEditable.isEdited = false;
-  document.getElementById("items" + isEditable.index).style.pointerEvents = "";
-  document.querySelectorAll("#delete").forEach((ele) => {
-    ele.disabled = false;
-    ele.style.cursor = "pointer";
-  });
-  const addButton = document.querySelector(".add");
-  addButton.disabled = false;
-  addButton.style.cursor = "pointer";
+  const todo = document.getElementById("items" + isEditable.index);
+  deleteButtonStatus(todo, false, "", "pointer");
+  enableAddButton();
 };
 
 const main = async () => {
