@@ -1,1 +1,1 @@
-structure --> item -> text
+extract usersData

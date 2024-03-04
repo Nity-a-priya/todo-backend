@@ -1,0 +1,20 @@
+[
+  {
+    "cookie": "user1",
+    "DATA": [
+      { "id": 22, "item": "nitya", "date": "2024-02-19" },
+      { "id": 23, "item": "priya", "date": "2024-02-20" },
+      { "id": 24, "item": "venky", "date": "2024-02-20", "isCompleted": true },
+      { "id": 25, "item": "setti", "date": "2024-02-19" }
+    ]
+  },
+  {
+    "cookie": "user2",
+    "DATA": [
+      { "id": 22, "item": "nitya", "date": "2024-02-19" },
+      { "id": 23, "item": "priya", "date": "2024-02-20" },
+      { "id": 24, "item": "venky", "date": "2024-02-20", "isCompleted": true },
+      { "id": 25, "item": "setti", "date": "2024-02-19" }
+    ]
+  }
+]
