@@ -1,10 +1,15 @@
+body{
+  background: #000000de;
+}
 .first-div {
   display: flex;
   justify-content: center;
 }
 .main-div {
   width: 70%;
-  border: 1px slategray;
+  background: #633c3c59;
+  border: 1px solid #dba2a2;
+  height: 1050px;
 }
 
 .add {
@@ -32,25 +37,26 @@
     0 0 5px rgb(131, 141, 149);
   cursor: pointer;
 }
-.logout{
+.logout {
   width: 100px;
-    height: 50px;
-    font-size: large;
-    margin-left: 20%;
-    cursor: pointer;
-    background: rgb(69, 69, 69);
-    letter-spacing: 1px;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0), 0 0 25px rgb(130, 77, 77), 0 0 5px rgb(68, 97, 119);
-    font-family: "Abril Fatface", serif;
-    color: white;
+  height: 50px;
+  font-size: large;
+  margin-left: 20%;
+  cursor: pointer;
+  background: rgb(69, 69, 69);
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0), 0 0 25px rgb(130, 77, 77),
+    0 0 5px rgb(68, 97, 119);
+  font-family: "Abril Fatface", serif;
+  color: white;
 }
-.logout:hover{
+.logout:hover {
   cursor: pointer;
   background: #063e5fc4;
 }
 a {
   color: white;
-    text-decoration: none;
+  text-decoration: none;
 }
 .input-div {
   margin-top: 0;

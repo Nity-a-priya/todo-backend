@@ -1,0 +1,48 @@
+body {
+  background-color: #000000e6;
+}
+.main-div {
+  height: 700px;
+  text-align: center;
+}
+
+h1 {
+  margin-top: 250px;
+  font-size: xxx-large;
+  letter-spacing: 1px;
+  font-family: sans-serif;
+  text-shadow: 2px 2px 2px #e52626, 0 0 25px rgb(130, 77, 77),
+    0 0 5px rgb(68, 97, 119);
+  color: white;
+}
+h3 {
+  color: beige;
+  letter-spacing: 3px;
+}
+
+button {
+  margin-top: 60px;
+  width: 300px;
+  height: 60px;
+  font-size: x-large;
+  /* margin-left: 20%; */
+  cursor: pointer;
+  background: rgb(36, 19, 57);
+  text-shadow: 1px 1px 1px rgb(248, 246, 246), 0 0 25px rgb(130, 77, 77),
+    0 0 5px rgb(68, 97, 119);
+
+  letter-spacing: 1px;
+
+  font-family: "Abril Fatface", serif;
+  border: 2px solid #dbb9db;
+}
+
+button:hover {
+  background: rgb(194 179 213);
+  text-shadow: 1px 1px 1px rgba(0, 0, 0), 0 0 25px rgb(130, 77, 77),
+    0 0 5px rgb(68, 97, 119);
+}
+
+a {
+  text-decoration: none;
+}
