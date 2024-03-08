@@ -13,7 +13,7 @@ const addInput = () => {
 };
 
 const clickSubmit = async (url, body) => {
-  await postReq(url, body);
+  DATA = await postReq(url, body);
   hideInput();
 };
 
@@ -75,7 +75,7 @@ const showEachToDo = (item, calendar_body, index) => {
     "items" + item.id,
     calendar_body
   );
- 
+
   todo.innerHTML = `
   <li id = "li" onclick = "completed('${item.id}', '${index}')">
     ${item.item}
@@ -88,11 +88,12 @@ const showEachToDo = (item, calendar_body, index) => {
   </button>`;
 };
 
-const displayToDos = (no_of_completed,dateWiseTodos, list, index) => {
- 
+const displayToDos = (no_of_completed, dateWiseTodos, list, index) => {
   const calendarToDo = dateWiseTodos.todos;
 
-  list.innerHTML = list.innerHTML + `
+  list.innerHTML =
+    list.innerHTML +
+    `
   <div class="outer_calendar">
     <div class="calendar" id='calendar${index}'>
 
@@ -154,7 +155,7 @@ const showItems = () => {
   const sortedDatewiseTodos = sortDates(datesWiseTodos);
   sortedDatewiseTodos.forEach((dateWiseTodos, index) => {
     let no_of_completed = 0;
-    displayToDos(no_of_completed,dateWiseTodos, list, index);
+    displayToDos(no_of_completed, dateWiseTodos, list, index);
   });
 };
 
@@ -181,7 +182,7 @@ const completed = async (id, index) => {
   body = {
     id,
   };
-  await postReq(url, body);
+  DATA = await postReq(url, body);
   showItems();
 };
 
@@ -212,7 +213,7 @@ const handleDelete = async (index) => {
   body = {
     index,
   };
-  await postReq(url, body);
+  DATA = await postReq(url, body);
   showItems();
 };
 

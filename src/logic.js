@@ -52,7 +52,7 @@ const checkIsValidUser = (req, res, next) => {
   if (cookie in COOKIE_DB) {
     next();
   }
-  res.redirect("/login.html");
+  res.redirect('/login.html');
 };
 
 const getuserData = (cookieHeader) => {
@@ -126,6 +126,11 @@ const MarkTodoAsDone = (req, res) => {
   res.send(USERS[user_index].DATA);
 };
 
+const logRequest = (req, res, next) => {
+  console.log(req.method, req.url);
+  next();
+}
+
 module.exports = {
   setCookie,
   addTodo,
@@ -134,4 +139,5 @@ module.exports = {
   deleteTodo,
   MarkTodoAsDone,
   checkIsValidUser,
+  logRequest
 };

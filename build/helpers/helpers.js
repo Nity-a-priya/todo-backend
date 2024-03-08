@@ -1,5 +1,10 @@
 const getRequest = (url) => {
-  return fetch(url).then((response) => response.json());
+  return fetch(url).then((response) => {
+    if (response.redirected) {
+      window.location.href = response.url;
+    }
+    return response.json();
+  });
 };
 
 const postReq = async (url, body) => {
@@ -11,9 +16,12 @@ const postReq = async (url, body) => {
     body: JSON.stringify(body),
   };
 
-  const post = await fetch(url, params);
-  const data = await post.json();
-  DATA = data;
+  return fetch(url, params).then((response) => {
+    if (response.redirected) {
+      window.location.href = response.url;
+    }
+    return response.json();
+  });
 };
 
 const createElement_class_id_AddParent = (ele, classname, id, parent) => {
