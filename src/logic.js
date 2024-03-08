@@ -31,16 +31,21 @@ const getMatchingUserIndex = (userID) => {
 };
 
 const readCookie = (req, res, next) => {
-   req.app.locals.cookie = req.cookies.cookie;
+  //  req.app.locals.cookie = req.cookies.cookie;
   next(); // Pass control to the next middleware function
 };
 
 const checkIsValidUser = (req, res, next) => {
-  let cookie = req.app.locals.cookie;
+  console.log("++++++++++", req.cookies.cookie);
+  console.log("++++++++++", USERS);
+  console.log("++++++++++", COOKIE_DB);
+    const cookie = req.cookies.cookie;
+  
   if (cookie in COOKIE_DB) {
     next();
   }
   res.redirect("/login.html");
+
 };
 
 const authorizeGithub = (req, res) => {
@@ -88,19 +93,24 @@ const createSession = (userID) => {
   return createCookieEntryInCookieDB(userID);
 };
 
-const getuserData = (cookieHeader) => {
-  const user_index = getMatchingUserIndex(cookieHeader);
+const getuserData = (userID) => {
+  const user_index = getMatchingUserIndex(userID);
+  console.log(user_index);
   return [...USERS[user_index].DATA];
 };
 
 const getTodos = (req, res) => {
-  const cookieHeader = req.app.locals.cookie;
-  const todosData = getuserData(cookieHeader);
-  res.send(todosData);
+  const cookieHeader = req.cookies.cookie;
+  const userID = COOKIE_DB[cookieHeader];
+  console.log(userID);
+  const todosData = getuserData(userID);
+  console.log("todos - ",todosData);
+  res.json(todosData);
 };
 
 const addTodo = (req, res) => {
-  const cookieHeader = req.app.locals.cookie;
+  const cookieHeader = req.cookies.cookie;
+  const userID = COOKIE_DB[cookieHeader];
   const text = req.body.value;
   const date = req.body.date;
   const id = generateId();
@@ -111,15 +121,16 @@ const addTodo = (req, res) => {
     isCompleted: false,
   };
 
-  const data = getuserData(cookieHeader);
+  const data = getuserData(userID);
   data.unshift(obj);
-  let user_index = getMatchingUserIndex(cookieHeader);
+  let user_index = getMatchingUserIndex(userID);
   USERS[user_index].DATA = data;
   res.send(USERS[user_index].DATA);
 };
 
 const editTodo = (req, res) => {
-  const cookieHeader = req.app.locals.cookie;
+  const cookieHeader = req.cookies.cookie;
+  const userID = COOKIE_DB[cookieHeader];
   const new_text = req.body.value;
   const new_date = req.body.date;
   const id = req.body.index;
@@ -129,30 +140,32 @@ const editTodo = (req, res) => {
     date: new_date,
     isCompleted: false,
   };
-  let data = getuserData(cookieHeader);
+  let data = getuserData(userID);
   const index = getMatchingIndex(data, id);
   data.splice(index, 1, newTodo);
-  let user_index = getMatchingUserIndex(cookieHeader);
+  let user_index = getMatchingUserIndex(userID);
   USERS[user_index].DATA = data;
   res.send(USERS[user_index].DATA);
 };
 
 const deleteTodo = (req, res) => {
-  const cookieHeader = req.app.locals.cookie;
+  const cookieHeader = req.cookies.cookie;
+  const userID = COOKIE_DB[cookieHeader];
   const id = req.body.index;
-  let data = getuserData(cookieHeader);
+  let data = getuserData(userID);
   const index = getMatchingIndex(data, id);
   data.splice(index, 1);
-  let user_index = getMatchingUserIndex(cookieHeader);
+  let user_index = getMatchingUserIndex(userID);
   USERS[user_index].DATA = data;
   res.send(USERS[user_index].DATA);
 };
 
 const MarkTodoAsDone = (req, res) => {
+  const cookieHeader = req.cookies.cookie;
+  const userID = COOKIE_DB[cookieHeader];
   const todoId = req.body.id;
-  const cookieHeader = req.app.locals.cookie;
-  let user_index = getMatchingUserIndex(cookieHeader);
-  const data = getuserData(cookieHeader);
+  let user_index = getMatchingUserIndex(userID);
+  const data = getuserData(userID);
   const todoIndex = getMatchingIndex(data, todoId);
   data[todoIndex].isCompleted = true;
   USERS[user_index].DATA = data;

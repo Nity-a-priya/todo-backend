@@ -15,6 +15,7 @@ const {
 
 const app = express();
 
+app.use(cookieParser());
 app.use(logRequest);
 app.use(express.static("build"));
 app.use(express.json());
@@ -22,9 +23,10 @@ app.use(express.json());
 app.get("/auth/github", authorizeGithub);
 app.get("/auth/github/callback", authenticateAndRedirect);
 
-app.use(cookieParser());
-app.use(readCookie);
 app.use(checkIsValidUser);
+
+
+// app.use(readCookie);
 
 app.get("/get", getTodos);
 app.post("/delete", deleteTodo);
