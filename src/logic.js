@@ -1,6 +1,5 @@
 const axios = require("axios");
 
-
 let USERS = [];
 let COOKIE_DB = {};
 const CLIENT_ID = "e23612d3c1afaf0fd348";
@@ -31,21 +30,17 @@ const getMatchingUserIndex = (userID) => {
 };
 
 const readCookie = (req, res, next) => {
-  //  req.app.locals.cookie = req.cookies.cookie;
-  next(); // Pass control to the next middleware function
+  req.app.locals.cookie = req.cookies.cookie;
+  next();
 };
 
 const checkIsValidUser = (req, res, next) => {
-  console.log("++++++++++", req.cookies.cookie);
-  console.log("++++++++++", USERS);
-  console.log("++++++++++", COOKIE_DB);
-    const cookie = req.cookies.cookie;
-  
+  const cookie = req.app.locals.cookie;
   if (cookie in COOKIE_DB) {
     next();
+  } else {
+    res.redirect("/login.html");
   }
-  res.redirect("/login.html");
-
 };
 
 const authorizeGithub = (req, res) => {
@@ -95,21 +90,18 @@ const createSession = (userID) => {
 
 const getuserData = (userID) => {
   const user_index = getMatchingUserIndex(userID);
-  console.log(user_index);
   return [...USERS[user_index].DATA];
 };
 
 const getTodos = (req, res) => {
-  const cookieHeader = req.cookies.cookie;
+  const cookieHeader = req.app.locals.cookie;
   const userID = COOKIE_DB[cookieHeader];
-  console.log(userID);
   const todosData = getuserData(userID);
-  console.log("todos - ",todosData);
   res.json(todosData);
 };
 
 const addTodo = (req, res) => {
-  const cookieHeader = req.cookies.cookie;
+  const cookieHeader = req.app.locals.cookie;
   const userID = COOKIE_DB[cookieHeader];
   const text = req.body.value;
   const date = req.body.date;
@@ -129,7 +121,7 @@ const addTodo = (req, res) => {
 };
 
 const editTodo = (req, res) => {
-  const cookieHeader = req.cookies.cookie;
+  const cookieHeader = req.app.locals.cookie;
   const userID = COOKIE_DB[cookieHeader];
   const new_text = req.body.value;
   const new_date = req.body.date;
@@ -149,7 +141,7 @@ const editTodo = (req, res) => {
 };
 
 const deleteTodo = (req, res) => {
-  const cookieHeader = req.cookies.cookie;
+  const cookieHeader = req.app.locals.cookie;
   const userID = COOKIE_DB[cookieHeader];
   const id = req.body.index;
   let data = getuserData(userID);
@@ -161,7 +153,7 @@ const deleteTodo = (req, res) => {
 };
 
 const MarkTodoAsDone = (req, res) => {
-  const cookieHeader = req.cookies.cookie;
+  const cookieHeader = req.app.locals.cookie;
   const userID = COOKIE_DB[cookieHeader];
   const todoId = req.body.id;
   let user_index = getMatchingUserIndex(userID);
@@ -170,6 +162,13 @@ const MarkTodoAsDone = (req, res) => {
   data[todoIndex].isCompleted = true;
   USERS[user_index].DATA = data;
   res.send(USERS[user_index].DATA);
+};
+
+const logoutUser = (req, res) => {
+  const cookieHeader = req.app.locals.cookie;
+  delete COOKIE_DB[cookieHeader];
+  res.clearCookie("cookie");
+  res.redirect("/");
 };
 
 const logRequest = (req, res, next) => {
@@ -188,4 +187,5 @@ module.exports = {
   logRequest,
   authorizeGithub,
   authenticateAndRedirect,
+  logoutUser,
 };

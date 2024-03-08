@@ -11,6 +11,7 @@ const {
   authorizeGithub,
   authenticateAndRedirect,
   readCookie,
+  logoutUser
 } = require("./logic");
 
 const app = express();
@@ -23,15 +24,16 @@ app.use(express.json());
 app.get("/auth/github", authorizeGithub);
 app.get("/auth/github/callback", authenticateAndRedirect);
 
+app.use(readCookie);
 app.use(checkIsValidUser);
 
 
-// app.use(readCookie);
 
 app.get("/get", getTodos);
 app.post("/delete", deleteTodo);
 app.post("/add", addTodo);
 app.post("/edit", editTodo);
 app.post("/completeSign", MarkTodoAsDone);
+app.get("/logout",logoutUser);
 
 module.exports = app;
