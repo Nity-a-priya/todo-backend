@@ -5,7 +5,8 @@ const {
   addTodo,
   editTodo,
   deleteTodo,
-  MarkTodoAsDone
+  MarkTodoAsDone,
+  checkIsValidUser
 } = require("./logic");
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(express.json());
 
 // Register the middleware
 app.use(setCookie);
+app.use(checkIsValidUser);
 app.get("/get", getTodos);
 app.post("/delete", deleteTodo);
 app.post("/add", addTodo);

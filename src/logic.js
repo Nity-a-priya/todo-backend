@@ -1,5 +1,16 @@
-// [{cookie:coo,DATA:[{},{}]},{},{}....]
+// [
+//   {
+//     user_id: "user1",
+//     DATA: [{ id: 1, item: "as", date: "2024-03-06", isCompleted: false }],
+//   },
+// ];
+
+// {
+//   cookie1: "user1";
+// }
+
 let USERS = [];
+let COOKIE_DB = {};
 
 const generateCookie = (() => {
   let cookieCount = 0;
@@ -8,7 +19,6 @@ const generateCookie = (() => {
     return cookieCount;
   };
 })();
-
 
 const generateId = (() => {
   let id = 0;
@@ -30,11 +40,19 @@ const setCookie = (req, res, next) => {
   let cookieHeader = req.headers.cookie;
   if (!cookieHeader) {
     cookieHeader = `user${generateCookie()}`;
-    USERS.push({ cookie: cookieHeader, DATA:[]});
+    USERS.push({ cookie: cookieHeader, DATA: [] });
     res.setHeader("Set-Cookie", cookieHeader);
   }
   req.app.locals.cookie = cookieHeader;
   next(); // Pass control to the next middleware function
+};
+
+const checkIsValidUser = (req, res, next) => {
+  let cookie = req.headers.cookie;
+  if (cookie in COOKIE_DB) {
+    next();
+  }
+  res.redirect("/login.html");
 };
 
 const getuserData = (cookieHeader) => {
@@ -108,8 +126,6 @@ const MarkTodoAsDone = (req, res) => {
   res.send(USERS[user_index].DATA);
 };
 
-
-
 module.exports = {
   setCookie,
   addTodo,
@@ -117,4 +133,5 @@ module.exports = {
   getTodos,
   deleteTodo,
   MarkTodoAsDone,
+  checkIsValidUser,
 };
