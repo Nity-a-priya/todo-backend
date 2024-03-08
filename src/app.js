@@ -1,6 +1,6 @@
 const express = require("express");
+const cookieParser = require('cookie-parser');
 const {
-  setCookie,
   getTodos,
   addTodo,
   editTodo,
@@ -9,7 +9,8 @@ const {
   checkIsValidUser,
   logRequest,
   authorizeGithub,
-  authenticateAndRedirect
+  authenticateAndRedirect,
+  readCookie,
 } = require("./logic");
 
 const app = express();
@@ -18,14 +19,13 @@ app.use(logRequest);
 app.use(express.static("build"));
 app.use(express.json());
 
-// Register the middleware
+app.get("/auth/github", authorizeGithub);
+app.get("/auth/github/callback", authenticateAndRedirect);
 
-app.get('/auth/github', authorizeGithub);
-app.get('/auth/github/callback', authenticateAndRedirect)
-
+app.use(cookieParser());
+app.use(readCookie);
 app.use(checkIsValidUser);
 
-app.use(setCookie);
 app.get("/get", getTodos);
 app.post("/delete", deleteTodo);
 app.post("/add", addTodo);

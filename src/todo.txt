@@ -1,11 +1,13 @@
 extract usersData
-[
+USERS = [
   {
     user_id: "user1",
     DATA: [{ id: 1, item: "as", date: "2024-03-06", isCompleted: false }],
   },
 ];
 
-{
+COOKIE_DB={
   cookie1: "user1";
 }
+
+change DS in all areas
