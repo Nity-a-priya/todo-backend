@@ -1,1 +1,11 @@
 extract usersData
+[
+  {
+    user_id: "user1",
+    DATA: [{ id: 1, item: "as", date: "2024-03-06", isCompleted: false }],
+  },
+];
+
+{
+  cookie1: "user1";
+}

@@ -8,6 +8,8 @@ const {
   MarkTodoAsDone,
   checkIsValidUser,
   logRequest,
+  authorizeGithub,
+  authenticateAndRedirect
 } = require("./logic");
 
 const app = express();
@@ -17,6 +19,10 @@ app.use(express.static("build"));
 app.use(express.json());
 
 // Register the middleware
+
+app.get('/auth/github', authorizeGithub);
+app.get('/auth/github/callback', authenticateAndRedirect)
+
 app.use(checkIsValidUser);
 
 app.use(setCookie);

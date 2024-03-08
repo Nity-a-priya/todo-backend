@@ -1,16 +1,11 @@
-// [
-//   {
-//     user_id: "user1",
-//     DATA: [{ id: 1, item: "as", date: "2024-03-06", isCompleted: false }],
-//   },
-// ];
+const axios = require('axios');
 
-// {
-//   cookie1: "user1";
-// }
 
 let USERS = [];
 let COOKIE_DB = {};
+const CLIENT_ID = "e23612d3c1afaf0fd348";
+const CLIENT_SECTRET = "b1b65d7cbe6cf13b65131ee0cd339fa3f2237cef";
+
 
 const generateCookie = (() => {
   let cookieCount = 0;
@@ -53,6 +48,33 @@ const checkIsValidUser = (req, res, next) => {
     next();
   }
   res.redirect('/login.html');
+};
+
+const authorizeGithub = (req, res) => {
+  const url = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}`;
+  res.redirect(url);
+};
+
+const authenticateAndRedirect = (req, res) => {
+  const code = req.query.code;
+  const headers = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    Accept: 'application/json',
+  };
+  axios
+    .post(
+      `https://github.com/login/oauth/access_token?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECTRET}&code=${code}`,
+      { headers }
+    )
+    .then((response) => {
+      let [access_token] = response.data.split('&');
+      access_token = access_token.split('=')[1];
+      const headers = { Authorization: `token ${access_token}` };
+      axios.get(`https://api.github.com/user`, { headers }).then((resp2) => {
+        console.log(resp2.data);
+        res.redirect('/login.html');
+      });
+    });
 };
 
 const getuserData = (cookieHeader) => {
@@ -139,5 +161,7 @@ module.exports = {
   deleteTodo,
   MarkTodoAsDone,
   checkIsValidUser,
-  logRequest
+  logRequest,
+  authorizeGithub,
+  authenticateAndRedirect
 };
